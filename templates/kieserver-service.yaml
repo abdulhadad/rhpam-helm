@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    deploymentConfig: "{{ .Values.applicationName }}-kieserver"
+metadata:
+  name: "{{ .Values.applicationName }}-kieserver"
+  labels:
+    application: "{{ .Values.applicationName }}"
+    service: "{{ .Values.applicationName }}-kieserver"
+  annotations:
+    description: All the KIE server web server's ports.

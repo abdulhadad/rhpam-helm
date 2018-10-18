@@ -1,0 +1,9 @@
+kind: RoleBinding
+apiVersion: v1
+metadata:
+    name: "{{ .Values.applicationName }}-kieserver-view"
+subjects:
+- kind: ServiceAccount
+  name: "{{ .Values.applicationName }}-kieserver"
+roleRef:
+  name: view

@@ -1,0 +1,19 @@
+kind: Service
+apiVersion: v1
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  - name: git-ssh
+    port: 8001
+    targetPort: 8001
+  selector:
+    deploymentConfig: "{{ .Values.applicationName }}-rhpamcentr"
+metadata:
+  name: "{{ .Values.applicationName }}-rhpamcentr"
+  labels:
+    application: "{{ .Values.applicationName }}"
+    service: "{{ .Values.applicationName }}-rhpamcentr"
+  annotations:
+    description: All the Business Central web server's ports.

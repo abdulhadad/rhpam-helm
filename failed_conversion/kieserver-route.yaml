@@ -1,0 +1,14 @@
+kind: Route
+apiVersion: v1
+id: "{{ .Values.applicationName }}-kieserver-http"
+metadata:
+  name: "{{ .Values.applicationName }}kieserver"
+  labels:
+    application: "{{ .Values.applicationName }}"
+    service: "{{ .Values.applicationName }}-kieserver"
+  annotations:
+    description: Route for execution server's http service.
+spec:
+  host: "{{ .Values.executionServerHostnameHttp }}"
+  to:
+    name: "{{ .Values.applicationName }}-kieserver"

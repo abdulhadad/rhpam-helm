@@ -1,0 +1,142 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: "{{ .Values.applicationName }}-rhpamcentr"
+  labels:
+    application: {{ .Values.applicationName | quote}}
+    service: "{{ .Values.applicationName }}-rhpamcentr"
+spec:
+  template:
+    metadata:
+      name: "{{ .Values.applicationName }}-rhpamcentr"
+      labels:
+        deploymentConfig: "{{ .Values.applicationName }}-rhpamcentr"
+        application: {{ .Values.applicationName | quote}}
+        service: "{{ .Values.applicationName }}-rhpamcentr"
+    spec:
+      terminationGracePeriodSeconds: 60
+      containers:
+      - name: "{{ .Values.applicationName }}-rhpamcentr"
+        image: "{{ .Values.rhpamcentr.image.repository }}:{{ .Values.rhpamcentr.image.tag }}"
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: {{ .Values.businessCentralMemoryLimit | quote}}
+        livenessProbe:
+          exec:
+            command:
+            - "/bin/bash"
+            - "-c"
+            - "curl --fail --silent -u '{{ .Values.kieAdminUser }}:{{ .Values.defaultPassword }}' http://localhost:8080/kie-wb.jsp"
+          initialDelaySeconds: 180
+          timeoutSeconds: 2
+          periodSeconds: 15
+        readinessProbe:
+          exec:
+            command:
+            - "/bin/bash"
+            - "-c"
+            - "curl --fail --silent -u '{{ .Values.kieAdminUser }}:{{ .Values.defaultPassword }}' http://localhost:8080/kie-wb.jsp"
+          initialDelaySeconds: 60
+          timeoutSeconds: 2
+          periodSeconds: 30
+          failureThreshold: 6
+        ports:
+        - name: jolokia
+          containerPort: 8778
+          protocol: TCP
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        - name: git-ssh
+          containerPort: 8001
+          protocol: TCP
+        env:
+        - name: KIE_ADMIN_USER
+          value: {{ .Values.kieAdminUser | quote}}
+        - name: KIE_ADMIN_PWD
+          value: {{ .Values.defaultPassword | quote}}
+        - name: KIE_MBEANS
+          value: {{ .Values.kieMBeans | quote}}
+        - name: KIE_SERVER_CONTROLLER_USER
+          value: {{ .Values.kieServerControllerUser | quote}}
+        - name: KIE_SERVER_CONTROLLER_PWD
+          value: {{ .Values.defaultPassword | quote}}
+        - name: KIE_SERVER_USER
+          value: {{ .Values.kieServerUser | quote}}
+        - name: KIE_SERVER_PWD
+          value: {{ .Values.defaultPassword | quote}}
+        - name: MAVEN_REPO_URL
+          value: {{ .Values.mavenRepoUrl | quote}}
+        - name: MAVEN_REPO_USERNAME
+          value: {{ .Values.mavenRepoUsername | quote}}
+        - name: MAVEN_REPO_PASSWORD
+          value: {{ .Values.mavenRepoPassword | quote}}
+        - name: KIE_MAVEN_USER
+          value: {{ .Values.businessCentralMavenUsername | quote}}
+        - name: KIE_MAVEN_PWD
+          value: {{ .Values.defaultPassword | quote}}
+        - name: PROBE_IMPL
+          value: probe.eap.jolokia.EapProbe
+        - name: PROBE_DISABLE_BOOT_ERRORS_CHECK
+          value: 'true'
+        - name: SSO_URL
+          value: {{ .Values.ssoUrl | quote}}
+        - name: SSO_OPENIDCONNECT_DEPLOYMENTS
+          value: "ROOT.war"
+        - name: SSO_REALM
+          value: {{ .Values.ssoRealm | quote}}
+        - name: SSO_SECRET
+          value: {{ .Values.businessCentralSsoSecret | quote}}
+        - name: SSO_CLIENT
+          value: {{ .Values.businessCentralSsoClient | quote}}
+        - name: SSO_USERNAME
+          value: {{ .Values.ssoUsername | quote}}
+        - name: SSO_PASSWORD
+          value: {{ .Values.ssoPassword | quote}}
+        - name: SSO_DISABLE_SSL_CERTIFICATE_VALIDATION
+          value: {{ .Values.ssoDisableSslCertificateValidation | quote}}
+        - name: HOSTNAME_HTTP
+          value: {{ .Values.businessCentralHostnameHttp | quote}}
+        - name: AUTH_LDAP_URL
+          value: {{ .Values.authLdapUrl | quote}}
+        - name: AUTH_LDAP_BIND_DN
+          value: {{ .Values.authLdapBindDn | quote}}
+        - name: AUTH_LDAP_BIND_CREDENTIAL
+          value: {{ .Values.authLdapBindCredential | quote}}
+        - name: AUTH_LDAP_JAAS_SECURITY_DOMAIN
+          value: {{ .Values.authLdapJaasSecurityDomain | quote}}
+        - name: AUTH_LDAP_BASE_CTX_DN
+          value: {{ .Values.authLdapBaseCtxDn | quote}}
+        - name: AUTH_LDAP_BASE_FILTER
+          value: {{ .Values.authLdapBaseFilter | quote}}
+        - name: AUTH_LDAP_SEARCH_SCOPE
+          value: {{ .Values.authLdapSearchScope | quote}}
+        - name: AUTH_LDAP_SEARCH_TIME_LIMIT
+          value: {{ .Values.authLdapSearchTimeLimit | quote}}
+        - name: AUTH_LDAP_DISTINGUISHED_NAME_ATTRIBUTE
+          value: {{ .Values.authLdapDistinguishedNameAttribute | quote}}
+        - name: AUTH_LDAP_PARSE_USERNAME
+          value: {{ .Values.authLdapParseUsername | quote}}
+        - name: AUTH_LDAP_USERNAME_BEGIN_STRING
+          value: {{ .Values.authLdapUsernameBeginString | quote}}
+        - name: AUTH_LDAP_USERNAME_END_STRING
+          value: {{ .Values.authLdapUsernameEndString | quote}}
+        - name: AUTH_LDAP_ROLE_ATTRIBUTE_ID
+          value: {{ .Values.authLdapRoleAttributeId | quote}}
+        - name: AUTH_LDAP_ROLES_CTX_DN
+          value: {{ .Values.authLdapRolesCtxDn | quote}}
+        - name: AUTH_LDAP_ROLE_FILTER
+          value: {{ .Values.authLdapRoleFilter | quote}}
+        - name: AUTH_LDAP_ROLE_RECURSION
+          value: {{ .Values.authLdapRoleRecursion | quote}}
+        - name: AUTH_LDAP_DEFAULT_ROLE
+          value: {{ .Values.authLdapDefaultRole | quote}}
+        - name: AUTH_LDAP_ROLE_NAME_ATTRIBUTE_ID
+          value: {{ .Values.authLdapRoleNameAttributeId | quote}}
+        - name: AUTH_LDAP_PARSE_ROLE_NAME_FROM_DN
+          value: {{ .Values.authLdapParseRoleNameFromDn | quote}}
+        - name: AUTH_LDAP_ROLE_ATTRIBUTE_IS_DN
+          value: {{ .Values.authLdapRoleAttributeIsDn | quote}}
+        - name: AUTH_LDAP_REFERRAL_USER_ATTRIBUTE_ID_TO_CHECK
+          value: {{ .Values.authLdapReferralUserAttributeIdToCheck | quote}}

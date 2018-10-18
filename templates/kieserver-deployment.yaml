@@ -1,0 +1,161 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: "{{ .Values.applicationName }}-kieserver"
+  labels:
+    application: {{ .Values.applicationName | quote}}
+    service: "{{ .Values.applicationName }}-kieserver"
+spec:
+  template:
+    metadata:
+      name: "{{ .Values.applicationName }}-kieserver"
+      labels:
+        deploymentConfig: "{{ .Values.applicationName }}-kieserver"
+        application: {{ .Values.applicationName | quote }}
+        service: "{{ .Values.applicationName }}-kieserver"
+    spec:
+      serviceAccountName: "{{ .Values.applicationName }}-kieserver"
+      terminationGracePeriodSeconds: 60
+      containers:
+      - name: "{{ .Values.applicationName }}-kieserver"
+        image: "{{ .Values.kieserver.image.repository }}:{{ .Values.kieserver.image.tag }}"
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: {{ .Values.executionServerMemoryLimit | quote }}
+        livenessProbe:
+          exec:
+            command:
+            - "/bin/bash"
+            - "-c"
+            - "curl --fail --silent -u {{ .Values.kieAdminUser }}:{{ .Values.defaultPassword }} http://localhost:8080/services/rest/server/healthcheck"
+          initialDelaySeconds: 180
+          timeoutSeconds: 2
+          periodSeconds: 15
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - "/bin/bash"
+            - "-c"
+            - "curl --fail --silent -u {{ .Values.kieAdminUser }}:{{ .Values.defaultPassword }} http://localhost:8080/services/rest/server/readycheck"
+          initialDelaySeconds: 60
+          timeoutSeconds: 2
+          periodSeconds: 30
+          failureThreshold: 6
+        ports:
+        - name: jolokia
+          containerPort: 8778
+          protocol: TCP
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        env:
+        - name: DROOLS_SERVER_FILTER_CLASSES
+          value: {{ .Values.droolsServerFilterClasses | quote}}
+        - name: KIE_ADMIN_USER
+          value: {{ .Values.kieAdminUser | quote}}
+        - name: KIE_ADMIN_PWD
+          value: {{ .Values.defaultPassword | quote}}
+        - name: KIE_MBEANS
+          value: {{ .Values.kieMBeans | quote}}
+        - name: KIE_SERVER_BYPASS_AUTH_USER
+          value: {{ .Values.kieServerBypassAuthUser | quote}}
+        - name: KIE_SERVER_CONTROLLER_USER
+          value: {{ .Values.kieServerControllerUser | quote}}
+        - name: KIE_SERVER_CONTROLLER_PWD
+          value: {{ .Values.defaultPassword | quote}}
+        - name: KIE_SERVER_CONTROLLER_SERVICE
+          value: "{{ .Values.applicationName }}-rhpamcentr"
+        - name: KIE_SERVER_CONTROLLER_PROTOCOL
+          value: "ws"
+        - name: KIE_SERVER_ID
+          value: "{{ .Values.kieServerId }}"
+        - name: KIE_SERVER_HOST
+          value: "{{ .Values.executionServerHostnameHttp }}"
+        - name: EXECUTION_SERVER_ROUTE_NAME
+          value: "{{ .Values.applicationName }}-kieserver"
+        - name: EXECUTION_SERVER_USE_SECURE_ROUTE_NAME
+          value: "${EXECUTION_SERVER_USE_SECURE_ROUTE_NAME}"
+        - name: KIE_SERVER_USER
+          value: {{ .Values.kieServerUser | quote}}
+        - name: KIE_SERVER_PWD
+          value: {{ .Values.defaultPassword | quote}}
+        - name: KIE_SERVER_CONTAINER_DEPLOYMENT
+          value: {{ .Values.kieServerContainerDeployment | quote}}
+        - name: MAVEN_REPOS
+          value: "RHPAMCENTR,EXTERNAL"
+        - name: RHPAMCENTR_MAVEN_REPO_SERVICE
+          value: "{{ .Values.applicationName }}-rhpamcentr"
+        - name: RHPAMCENTR_MAVEN_REPO_PATH
+          value: "/maven2/"
+        - name: RHPAMCENTR_MAVEN_REPO_USERNAME
+          value: {{ .Values.businessCentralMavenUsername | quote}}
+        - name: RHPAMCENTR_MAVEN_REPO_PASSWORD
+          value: {{ .Values.defaultPassword | quote}}
+        - name: EXTERNAL_MAVEN_REPO_URL
+          value: {{ .Values.mavenRepoUrl | quote}}
+        - name: EXTERNAL_MAVEN_REPO_USERNAME
+          value: {{ .Values.mavenRepoUsername | quote}}
+        - name: MAVEN_REPO_PASSWORD
+          value: {{ .Values.mavenRepoPassword | quote}}
+        - name: SSO_URL
+          value: {{ .Values.ssoUrl | quote}}
+        - name: SSO_OPENIDCONNECT_DEPLOYMENTS
+          value: "ROOT.war"
+        - name: SSO_REALM
+          value: {{ .Values.ssoRealm | quote}}
+        - name: SSO_SECRET
+          value: {{ .Values.kieServerSsoSecret | quote}}
+        - name: SSO_CLIENT
+          value: {{ .Values.kieServerSsoClient | quote}}
+        - name: SSO_USERNAME
+          value: {{ .Values.ssoUsername | quote}}
+        - name: SSO_PASSWORD
+          value: {{ .Values.ssoPassword | quote}}
+        - name: SSO_DISABLE_SSL_CERTIFICATE_VALIDATION
+          value: {{ .Values.ssoDisableSslCertificateValidation | quote}}
+        - name: HOSTNAME_HTTP
+          value: {{ .Values.executionServerHostnameHttp | quote}}
+        - name: AUTH_LDAP_URL
+          value: {{ .Values.authLdapUrl | quote}}
+        - name: AUTH_LDAP_BIND_DN
+          value: {{ .Values.authLdapBindDn | quote}}
+        - name: AUTH_LDAP_BIND_CREDENTIAL
+          value: {{ .Values.authLdapBindCredential | quote}}
+        - name: AUTH_LDAP_JAAS_SECURITY_DOMAIN
+          value: {{ .Values.authLdapJaasSecurityDomain | quote}}
+        - name: AUTH_LDAP_BASE_CTX_DN
+          value: {{ .Values.authLdapBaseCtxDn | quote}}
+        - name: AUTH_LDAP_BASE_FILTER
+          value: {{ .Values.authLdapBaseFilter | quote}}
+        - name: AUTH_LDAP_SEARCH_SCOPE
+          value: {{ .Values.authLdapSearchScope | quote}}
+        - name: AUTH_LDAP_SEARCH_TIME_LIMIT
+          value: {{ .Values.authLdapSearchTimeLimit | quote}}
+        - name: AUTH_LDAP_DISTINGUISHED_NAME_ATTRIBUTE
+          value: {{ .Values.authLdapDistinguishedNameAttribute | quote}}
+        - name: AUTH_LDAP_PARSE_USERNAME
+          value: {{ .Values.authLdapParseUsername | quote}}
+        - name: AUTH_LDAP_USERNAME_BEGIN_STRING
+          value: {{ .Values.authLdapUsernameBeginString | quote}}
+        - name: AUTH_LDAP_USERNAME_END_STRING
+          value: {{ .Values.authLdapUsernameEndString | quote}}
+        - name: AUTH_LDAP_ROLE_ATTRIBUTE_ID
+          value: {{ .Values.authLdapRoleAttributeId | quote}}
+        - name: AUTH_LDAP_ROLES_CTX_DN
+          value: {{ .Values.authLdapRolesCtxDn | quote}}
+        - name: AUTH_LDAP_ROLE_FILTER
+          value: {{ .Values.authLdapRoleFilter | quote}}
+        - name: AUTH_LDAP_ROLE_RECURSION
+          value: {{ .Values.authLdapRoleRecursion | quote}}
+        - name: AUTH_LDAP_DEFAULT_ROLE
+          value: {{ .Values.authLdapDefaultRole | quote}}
+        - name: AUTH_LDAP_ROLE_NAME_ATTRIBUTE_ID
+          value: {{ .Values.authLdapRoleNameAttributeId | quote}}
+        - name: AUTH_LDAP_PARSE_ROLE_NAME_FROM_DN
+          value: {{ .Values.authLdapParseRoleNameFromDn | quote}}
+        - name: AUTH_LDAP_ROLE_ATTRIBUTE_IS_DN
+          value: {{ .Values.authLdapRoleAttributeIsDn | quote}}
+        - name: AUTH_LDAP_REFERRAL_USER_ATTRIBUTE_ID_TO_CHECK
+          value: {{ .Values.authLdapReferralUserAttributeIdToCheck | quote}}

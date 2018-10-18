@@ -1,0 +1,306 @@
+### START ENVIRONMENT 
+## Application Name
+##
+## Default: myapp
+applicationName: myapp
+
+## Default Password
+##
+## Default: RedHat
+defaultPassword: RedHat
+
+## KIE Admin User
+##
+## Default: adminUser
+kieAdminUser: adminUser
+
+## KIE Server User
+##
+## Default: executionUser
+kieServerUser: executionUser
+
+## KIE Server ID
+##
+## Default: ''
+kieServerId: ''
+
+## KIE Server Bypass Auth User
+##
+## Default: 'false'
+kieServerBypassAuthUser: 'false'
+
+## KIE Server Controller User
+##
+## Default: controllerUser
+kieServerControllerUser: controllerUser
+
+## KIE MBeans
+##
+## Default: enabled
+kieMBeans: enabled
+
+## Drools Server Filter Classes
+##
+## Default: 'true'
+droolsServerFilterClasses: 'true'
+
+## Execution Server Custom http Route Hostname
+##
+## Default: ''
+executionServerHostnameHttp: ''
+
+## Business Central Custom http Route Hostname
+##
+## Default: ''
+businessCentralHostnameHttp: ''
+
+## ImageStream Namespace
+##
+## Default: openshift
+imageStreamNamespace: openshift
+
+## KIE Server ImageStream Name
+##
+## Default: "rhpam70-kieserver-openshift"
+kieServerImageStreamNamespace: "rhpam70-kieserver-openshift"
+
+## ImageStream Tag
+##
+## Default: "1.2"
+imageStreamTag: "1.2"
+
+## KIE Server Container Deployment
+##
+## Default: ''
+kieServerContainerDeployment: ''
+
+## Maven repository URL
+##
+## Example: http://nexus.nexus-project.svc.cluster.local:8081/nexus/content/groups/public/
+mavenRepoUrl: 
+
+## Maven repository username
+##
+mavenRepoUsername: 
+
+## Maven repository password
+##
+mavenRepoPassword:
+
+## Username for the Maven service hosted by Business Central
+##
+## Default: mavenUser
+businessCentralMavenUsername: mavenUser
+
+## Business Central Container Memory Limit
+##
+## Default: 2Gi
+businessCentralMemoryLimit: 2Gi
+
+## Execution Server Container Memory Limit
+##
+## Default: 1Gi
+executionServerMemoryLimit: 1Gi
+
+## RH-SSO URL
+##
+## example: https://rh-sso.example.com/auth
+ssoUrl:
+
+## RH-SSO Realm name
+##
+ssoRealm: 
+
+## Business Central RH-SSO Client name
+##
+businessCentralSsoClient: ''
+
+## Business Central RH-SSO Client Secret
+##
+## example: "252793ed-7118-4ca8-8dab-5622fa97d892"
+businessCentralSsoSecret: 
+
+## KIE Server RH-SSO Client name
+##
+kieServerSsoClient: 
+
+## KIE Server RH-SSO Client Secret
+##
+## example: "252793ed-7118-4ca8-8dab-5622fa97d892"
+kieServerSsoSecret: 
+
+## RH-SSO Realm Admin Username
+##
+ssoUsername: 
+
+## RH-SSO Realm Admin Password
+##
+ssoPassword: 
+
+## RH-SSO Disable SSL Certificate Validation
+##
+## Default: "false"
+ssoDisableSslCertificateValidation: "false"
+
+## LDAP Endpoint
+##
+## example: "ldap://myldap.example.com"
+authLdapUrl: 
+
+## LDAP Bind DN
+##
+## example: "uid=admin,ou=users,ou=exmample,ou=com"
+authLdapBindDn: 
+
+## LDAP Bind Credentials
+##
+## example: "Password"
+authLdapBindCredential: 
+
+## LDAP JAAS Security Domain
+##
+authLdapJaasSecurityDomain: 
+
+## LDAP Base DN
+##
+## example: "ou=users,ou=example,ou=com"
+authLdapBaseCtxDn:
+
+## LDAP Base Search filter
+##
+## example: "(uid={0})"
+authLdapBaseFilter: 
+
+## LDAP Search scope
+##
+## example:"SUBTREE_SCOPE"
+authLdapSearchScope: 
+
+## LDAP Search time limit
+##
+## example: "10000"
+authLdapSearchTimeLimit:
+
+## LDAP DN attribute
+##
+## example: "distinguishedName"
+authLdapDistinguishedNameAttribute: 
+
+## LDAP Parse username
+##
+## example: "true"
+authLdapParseUsername: 
+
+## LDAP Username begin string
+##
+authLdapUsernameBeginString: 
+
+## LDAP Username end string
+##
+authLdapUsernameEndString: 
+
+## LDAP Role attributeID
+##
+## example: memberOf
+authLdapRoleAttributeId:
+
+## LDAP Roles Search DN
+##
+## example: "ou=groups,ou=example,ou=com"
+authLdapRolesCtxDn: 
+
+## LDAP Role search filter
+##
+## example: "(memberOf={1})"
+authLdapRoleFilter:
+
+## LDAP Role recursion
+##
+## example: "1"
+authLdapRoleRecursion:
+
+## LDAP Default role
+##
+## example: "guest"
+authLdapDefaultRole:
+
+## LDAP Role name attribute ID
+##
+## example: "name"
+authLdapRoleNameAttributeId:
+
+## LDAP Role DN contains roleNameAttributeID
+##
+## example: "false"
+authLdapParseRoleNameFromDn:
+
+## LDAP Role Attribute ID is DN
+##
+## example: "false"
+authLdapRoleAttributeIsDn:
+
+## LDAP Referral user attribute ID
+##
+authLdapReferralUserAttributeIdToCheck: 
+### END ENVIRONMENT
+
+## Define serviceAccount names for components. Defaults to component's fully qualified name.
+##
+serviceAccounts:
+  rhpamcentr:
+    create: true
+    name:
+  kubeStateMetrics:
+    create: true
+    name:
+
+rhpamcentr:
+  ## If false, rhpamcentr will not be installed
+  ##
+  enabled: true
+
+  ## rhpamcentr container name
+  ##
+  name: rhpamcentr
+
+  ## rhpamcentr container image
+  ##
+  image:
+    repository: registry.access.redhat.com/rhpam-7/rhpam70-businesscentral-openshift
+    tag: 1.2
+    pullPolicy: IfNotPresent
+
+  ## rhpamcentr resource requests and limits
+  ## Ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources: {}
+
+  ## Configure the service
+  ## ref: http://kubernetes.io/docs/user-guide/services/
+  service:
+    ## Specify a service type
+    ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services---service-types
+    type: ClusterIP
+    port: 3306
+    # nodePort: 32000
+
+kieserver:
+  ## If false, kieserver will not be installed
+  ##
+  enabled: true
+
+  ## kieserver container name
+  ##
+  name: kieserver
+
+  ## kieserver container image
+  ##
+  image:
+    repository: registry.access.redhat.com/rhpam-7/rhpam70-kieserver-openshift
+    tag: 1.2
+    pullPolicy: IfNotPresent
+
+  ## rhpamcentr resource requests and limits
+  ## Ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources: {}

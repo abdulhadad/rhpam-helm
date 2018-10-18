@@ -1,0 +1,16 @@
+name: rhpam70-trial-ephemeral
+version: 1.2
+description: Red Hat Process Automation Manager 7.0 ephemeral trial environment
+keywords:
+- rhpam
+- jboss
+- trial
+home: https://www.redhat.com/en/technologies/jboss-middleware/process-automation-manager
+icon: https://www.jbpm.org/headerFooter/jBPMLogo200px.png
+sources:
+- https://access.redhat.com/containers/#/registry.access.redhat.com/rhpam-7/rhpam70-businesscentral-openshift
+- https://access.redhat.com/containers/#/registry.access.redhat.com/rhpam-7/rhpam70-kieserver-openshift
+maintainers:
+- name: KA Hadad 
+  email: abdul.hadad@gmail.com
+engine: gotpl

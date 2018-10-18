@@ -1,0 +1,16 @@
+kind: Route
+apiVersion: v1
+id: "{{ .Values.applicationName }}-rhpamcentr-http"
+metadata:
+  name: "{{ .Values.applicationName }}-rhpamcentr"
+  labels:
+    application: "{{ .Values.applicationName }}"
+    service: "{{ .Values.applicationName }}-rhpamcentr"
+  annotations:
+    description: Route for Business Central's http service.
+spec:
+  host: "{{ .Values.businessCentralHostnameHttp }}"
+  to:
+    name: "{{ .Values.applicationName }}-rhpamcentr"
+  port:
+    targetPort: http
